@@ -20,6 +20,7 @@ class Producto {
         foto: doc.data().foto,
         stock: doc.data().stock,
         descripcion: doc.data().descripcion,
+        idProd: doc.data().idProd,
       }));
 
       return response;
@@ -45,9 +46,14 @@ class Producto {
     const query = db.collection("productos");
     try {
       let doc = query.doc();
-      const newProduct = await doc.create(prod);
-      console.log(newProduct);
-      return newProduct;
+      await doc.create(prod);
+
+      const idProd = doc.id;
+      const producComplete = { ...prod, idProd };
+
+      const docUpdate = query.doc(idProd);
+      const producUpdated = await docUpdate.update(producComplete);
+      return producUpdated;
     } catch (e) {
       console.log(e);
     }

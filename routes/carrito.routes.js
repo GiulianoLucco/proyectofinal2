@@ -33,4 +33,13 @@ routerCarrito.post("/:id/productos/:idProd", async (req, res) => {
   res.send(respuesta);
 });
 
+routerCarrito.delete("/:id/productos/:idProd", async (req, res) => {
+  const productosDelete = await carrito.producDelete(
+    String(req.params.idProd),
+    String(req.params.idCart)
+  );
+
+  res.send(productosDelete);
+});
+
 module.exports = { routerCarrito };

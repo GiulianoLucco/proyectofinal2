@@ -44,7 +44,7 @@ class Carrito {
       const doc = query.doc();
       const newCarr = await doc.create({
         timestamp: today.getDate(),
-        productos: [{}],
+        productos: [],
       });
       return newCarr;
     } catch (e) {
@@ -59,10 +59,13 @@ class Carrito {
       let produc = await producto.listar(idProd);
       const carrito = await this.listar(id);
       let doc = query.doc(id);
+      let update;
 
-      const update = await doc.update({
+      update = await doc.update({
         productos: admin.firestore.FieldValue.arrayUnion(produc),
       });
+
+      console.log(update);
 
       return update;
     } catch (e) {
@@ -77,6 +80,28 @@ class Carrito {
       let doc = query.doc(id);
       const deleteCarr = await doc.delete();
       return deleteCarr;
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  async producDelete(idCarr, idProd) {
+    const db = admin.firestore();
+    const query = db.collection("carritos");
+
+    try {
+      const carrito = await this.listar(idCarr);
+      let doc = query.doc(idCarr);
+      console.log(carrito);
+      const productoFilter = carrito.productos.filter((produc) => {
+        return produc.idProd != idProd;
+      });
+
+      let update;
+
+      update = await doc.update({
+        productos: admin.firestore.FieldValue.arrayUnion(productoFilter),
+      });
     } catch (e) {
       console.log(e);
     }
