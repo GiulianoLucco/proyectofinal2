@@ -12,7 +12,10 @@ class Carrito {
     try {
       const doc = query.doc(String(id));
       const finded = await doc.get(id);
-      return finded.data();
+      const contCarr = finded.data();
+      const idCarr = doc.id;
+      const contenido = { ...contCarr, idCarr };
+      return contenido;
     } catch (e) {
       console.log(e);
     }
@@ -24,11 +27,18 @@ class Carrito {
     try {
       const querySnapshot = await query.get();
       let docs = querySnapshot.docs;
+
       const response = docs.map((doc) => ({
+        id: doc.id,
         timestamp: doc.data().timestamp,
         productos: doc.data().productos,
       }));
-
+      const idCarrito = [];
+      const ids = response.forEach((obj) => {
+        console.log(obj.id);
+        idCarrito.push(`Id carrito N° :${obj.id}`);
+      });
+      console.log(idCarrito);
       return response || { error: "productos no encotrado" };
     } catch (e) {
       console.log(e);
@@ -43,10 +53,12 @@ class Carrito {
     try {
       const doc = query.doc();
       const newCarr = await doc.create({
+        id: doc.id,
         timestamp: today.getDate(),
         productos: [],
       });
-      return newCarr;
+      console.log(doc.id);
+      return doc.id;
     } catch (e) {
       console.log(e);
     }
